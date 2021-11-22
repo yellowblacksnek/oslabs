@@ -1,0 +1,28 @@
+#! /usr/bin/gnuplot -persist
+
+set term pngcairo size 1024,800
+
+working_directory = system("dirname ".ARG0)."/"
+datafile = working_directory."../measures/threads.csv"
+outputfile = working_directory."../measures/threads.png"
+set output outputfile
+
+set xlabel "time" 
+set ylabel "num of threads"
+
+set grid ytics
+
+set xdata time
+set timefmt '%b %d %H:%M:%S'
+set format x '%b %d %H:%M:%S'
+set xtics rotate
+
+set title "threads" font "Helvetica Bold, 12"
+
+set datafile separator ';'
+
+plot datafile using 1:2 with lines lc rgb "green" title "R",\
+datafile using 1:3 with lines lc rgb "red" title "S",\
+datafile using 1:4 with lines lc rgb "blue" title "T",\
+datafile using 1:5 with lines lc rgb "grey" title "Z",\
+datafile using 1:6 with lines lc rgb "orange" title "D"

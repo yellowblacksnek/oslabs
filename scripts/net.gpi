@@ -1,0 +1,25 @@
+#! /usr/bin/gnuplot -persist
+
+set term pngcairo size 1024,800
+
+working_directory = system("dirname ".ARG0)."/"
+datafile = working_directory."../measures/net.csv"
+outputfile = working_directory."../measures/net.png"
+set output outputfile
+
+set xlabel "time" 
+set ylabel "B/s"
+
+set grid ytics
+
+set xdata time
+set timefmt '%b %d %H:%M:%S %Y'
+set format x '%b %d %H:%M:%S %Y'
+set xtics rotate
+
+set title "network usage" font "Helvetica Bold, 12"
+
+set datafile separator ';'
+
+plot datafile using 1:4 with lines title "sent B/s",\
+datafile using 1:5 with lines title "received B/s"

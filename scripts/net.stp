@@ -1,0 +1,42 @@
+#! /usr/bin/env stap
+
+global r, s
+
+probe netdev.transmit
+{
+    if(pid() == target())
+        s <<< length
+}
+
+probe netdev.receive
+{
+    if(pid() == target())
+        r <<< length
+}
+
+function print_activity()
+{
+  /*printf("%10s %5s %5s %5s %5s\n",
+         "TIME", XMIT_PK", "RECV_PK",
+         "XMIT_B", "RECV_B")*/
+
+    printf("%10s;%5d;%5d;%5d;%5d\n",
+           substr(ctime(gettimeofday_s()), 4, 21), 
+           @count(s), 
+           @count(r),
+           @count(s) ? @sum(s) : 0,
+           @count(r) ? @sum(r) : 0)
+
+
+    delete r
+    delete s
+
+    if(pid2execname(target()) == "") {
+        exit()
+    }
+}
+
+probe timer.ms(1000), end, error
+{
+  print_activity()
+}
